@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐷 Cofrinho da Ana
 
-## Getting Started
+Sistema de controle financeiro pessoal desenvolvido com Next.js 16 e autenticação OIDC.
 
-First, run the development server:
+## 🚀 Tecnologias
+
+- **Next.js 16** - Framework React com App Router
+- **React 19** - Biblioteca UI
+- **Bun** - Runtime JavaScript ultra-rápido
+- **PostgreSQL** - Banco de dados
+- **OIDC** - Autenticação com controle de permissões
+- **Tailwind CSS + DaisyUI** - Estilização
+- **TypeScript** - Tipagem estática
+
+## ✨ Funcionalidades
+
+- ✅ Autenticação segura via OIDC
+- ✅ Adicionar transações financeiras
+- ✅ Visualizar histórico de transações
+- ✅ Calcular saldo total
+- ✅ Excluir transações (somente admins)
+- ✅ Dashboard interativo
+
+## 📋 Pré-requisitos
+
+- [Bun](https://bun.sh) instalado
+- PostgreSQL rodando
+- Servidor OIDC configurado
+
+## 🔧 Configuração
+
+1. Clone o repositório:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/seu-usuario/cofrinho-da-ana.git
+cd cofrinho-da-ana
+```
+
+2. Instale as dependências:
+
+```bash
+bun install
+```
+
+3. Configure as variáveis de ambiente (crie um arquivo `.env.local`):
+
+```env
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/cofrinho
+OIDC_ISSUER=https://seu-servidor-oidc.com
+OIDC_CLIENT_ID=seu-client-id
+OIDC_CLIENT_SECRET=seu-client-secret
+OIDC_REDIRECT_URI=http://localhost:3000/auth/callback
+```
+
+4. Execute as migrações (criadas automaticamente na primeira execução)
+
+## 🏃 Executando o Projeto
+
+### Modo Desenvolvimento
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build de Produção
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+bun build
+bun start
+```
 
-## Learn More
+## 📁 Estrutura do Projeto
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── actions/          # Server Actions do Next.js
+│   ├── addTransaction.ts
+│   ├── deleteTransaction.ts
+│   └── loadTransactions.ts
+├── auth/            # Rotas de autenticação
+│   ├── login/
+│   ├── logout/
+│   └── callback/
+├── dashboard/       # Área logada
+│   ├── components/
+│   └── addTransaction/
+├── db/              # Camada de banco de dados
+└── service/         # Serviços (OIDC)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔐 Autenticação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O sistema utiliza OIDC (OpenID Connect) para autenticação. Usuários com a role `admin` têm permissões adicionais para excluir transações.
 
-## Deploy on Vercel
+## 🛠️ Scripts Disponíveis
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `bun dev` - Inicia servidor de desenvolvimento
+- `bun build` - Gera build de produção
+- `bun start` - Executa build de produção
+- `bun lint` - Executa linter ESLint
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Licença
+
+Este é um projeto pessoal.
+
+## 👨‍💻 Autor
+
+Desenvolvido com 💙 por gsbenevides2

@@ -10,6 +10,9 @@ const openSans = Open_Sans({
 export const metadata: Metadata = {
   title: "Cofrinho da Ana",
   description: "Relação de Operações e Gastos da Ana",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
 };
 
 export default function RootLayout({
@@ -18,10 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${openSans.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${openSans.variable} h-full antialiased`}>
       <body className="flex flex-col min-h-full">{children}</body>
     </html>
   );

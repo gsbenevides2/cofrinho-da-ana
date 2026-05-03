@@ -1,7 +1,6 @@
 import { OIDCClient } from "@/app/service/oidc";
 import { goToErrorPage } from "@/app/utils/goToErrorPage";
 import { makeSetCookieUtil } from "@/app/utils/makeSetCookieUtil";
-import Bun from "bun";
 
 export async function GET(request: Request) {
   const code = new URL(request.url).searchParams.get("code");

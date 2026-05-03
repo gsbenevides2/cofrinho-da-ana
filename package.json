@@ -1,6 +1,7 @@
 {
   "name": "cofrinho-da-ana",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "Sistema de gestão de transações financeiras pessoais desenvolvido com Next.js 16, React 19, Bun e PostgreSQL. Autenticação segura via OIDC com controle de permissões.",
   "private": true,
   "scripts": {
     "dev": "bun --bun next dev",
