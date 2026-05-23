@@ -10,8 +10,11 @@ const addTransactionBodySchema = t.Object({
     example: "Depósito mensal",
   }),
   amount: t.Number({
-    description: "Valor da transação (depósito positivo / saque negativo)",
+    description:
+      "Valor da transação (depósito positivo / saque negativo). Deve ter no máximo 2 casas decimais.",
     // compatível com NUMERIC(10,2)
+    minimum: -100000000,
+    maximum: 100000000,
     multipleOf: 0.01,
     example: 120.5,
   }),
