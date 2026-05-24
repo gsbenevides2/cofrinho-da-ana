@@ -1,14 +1,26 @@
 "use server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Database } from "@/app/db";
 import { OIDCClient } from "@/app/service/oidc";
 import { UserGroup } from "@/app/service/oidc/types";
 import { revalidatePath } from "next/cache";
 
-interface AddTransactionResponse {
-  success: boolean;
+type AddTransactionErrorCode = "UNAUTHORIZED" | "FORBIDDEN" | "SERVER_ERROR";
+
+interface AddTransactionSuccessResponse {
+  success: true;
   message: string;
 }
+
+interface AddTransactionErrorResponse {
+  success: false;
+  message: string;
+  errorCode: AddTransactionErrorCode;
+}
+
+type AddTransactionResponse =
+  | AddTransactionSuccessResponse
+  | AddTransactionErrorResponse;
 
 interface AddTransactionParams {
   description: string;
@@ -20,10 +32,19 @@ export async function addTransactionAction(
 ): Promise<AddTransactionResponse> {
   try {
     const cookiesStore = await cookies();
-    const accessToken = cookiesStore.get("access_token")?.value;
+    const headersStore = await headers();
+    const rawAuthorization = headersStore.get("authorization");
+    const bearerToken = rawAuthorization
+      ?.match(/^Bearer\s+(.+)$/i)?.[1]
+      ?.trim();
+    const accessToken = cookiesStore.get("access_token")?.value ?? bearerToken;
 
     if (!accessToken) {
-      return { success: false, message: "Não autorizado" };
+      return {
+        success: false,
+        errorCode: "UNAUTHORIZED",
+        message: "Não autorizado",
+      };
     }
 
     // Verificar se o usuário é admin
@@ -31,6 +52,7 @@ export async function addTransactionAction(
     if (!userInfo.groups.includes(UserGroup.admin)) {
       return {
         success: false,
+        errorCode: "FORBIDDEN",
         message: "Apenas administradores podem adicionar transações",
       };
     }
@@ -45,6 +67,10 @@ export async function addTransactionAction(
     return { success: true, message: "Transação adicionada com sucesso" };
   } catch (error) {
     console.error("Erro ao adicionar transação:", error);
-    return { success: false, message: "Erro ao adicionar transação" };
+    return {
+      success: false,
+      errorCode: "SERVER_ERROR",
+      message: "Erro ao adicionar transação",
+    };
   }
 }
