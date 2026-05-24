@@ -15,7 +15,7 @@ interface AddTransactionSuccessResponse {
 interface AddTransactionErrorResponse {
   success: false;
   message: string;
-  errorCode?: AddTransactionErrorCode;
+  errorCode: AddTransactionErrorCode;
 }
 
 type AddTransactionResponse =

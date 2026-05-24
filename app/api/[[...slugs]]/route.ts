@@ -30,16 +30,16 @@ const addTransactionSuccessResponseSchema = t.Object({
   }),
 });
 
+type AddTransactionErrorCode = "UNAUTHORIZED" | "FORBIDDEN" | "SERVER_ERROR";
+
 const addTransactionErrorResponseSchema = t.Object({
   success: t.Literal(false, { description: "A requisição falhou" }),
   message: t.String({ description: "Mensagem de erro" }),
-  errorCode: t
-    .Union([
-      t.Literal("UNAUTHORIZED"),
-      t.Literal("FORBIDDEN"),
-      t.Literal("SERVER_ERROR"),
-    ])
-    .optional(),
+  errorCode: t.Union([
+    t.Literal("UNAUTHORIZED"),
+    t.Literal("FORBIDDEN"),
+    t.Literal("SERVER_ERROR"),
+  ]),
 });
 
 export const app = new Elysia({ prefix: "/api" })
@@ -65,23 +65,22 @@ export const app = new Elysia({ prefix: "/api" })
         return result;
       }
 
-      const statusByErrorCode: Record<string, number> = {
+      const statusByErrorCode = {
         UNAUTHORIZED: 401,
         FORBIDDEN: 403,
         SERVER_ERROR: 500,
-      };
+      } as const satisfies Record<AddTransactionErrorCode, number>;
 
-      ctx.set.status = statusByErrorCode[
-        (result.errorCode ?? "SERVER_ERROR") as string
-      ];
+      ctx.set.status = statusByErrorCode[result.errorCode];
       return result;
     },
     {
       body: addTransactionBodySchema,
       response: {
         201: addTransactionSuccessResponseSchema,
-        400: addTransactionErrorResponseSchema,
         401: addTransactionErrorResponseSchema,
+        403: addTransactionErrorResponseSchema,
+        422: addTransactionErrorResponseSchema,
         500: addTransactionErrorResponseSchema,
       },
       detail: {
