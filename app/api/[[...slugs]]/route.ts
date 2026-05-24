@@ -110,8 +110,7 @@ export const app = new Elysia({ prefix: "/api" })
             bearerAuth: [],
           },
         ],
-        description:
-          "Cria uma nova transação no banco de dados. Autenticação feita via cookie `access_token` (não Bearer) usando OIDCClient.getUserInfo() e verificação de grupo admin.",
+        description: "Cria uma nova transação no banco de dados.",
       },
     },
   );
