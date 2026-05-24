@@ -33,6 +33,13 @@ const addTransactionSuccessResponseSchema = t.Object({
 const addTransactionErrorResponseSchema = t.Object({
   success: t.Literal(false, { description: "A requisição falhou" }),
   message: t.String({ description: "Mensagem de erro" }),
+  errorCode: t
+    .Union([
+      t.Literal("UNAUTHORIZED"),
+      t.Literal("FORBIDDEN"),
+      t.Literal("SERVER_ERROR"),
+    ])
+    .optional(),
 });
 
 export const app = new Elysia({ prefix: "/api" })
@@ -49,22 +56,24 @@ export const app = new Elysia({ prefix: "/api" })
   )
   .post(
     "/transaction",
-    async ({ body, set }) => {
-      const params = body as AddTransactionParams;
-
+    async (ctx) => {
+      const params = ctx.body as AddTransactionParams;
       const result = await addTransactionAction(params);
 
       if (result.success) {
-        set.status = 201;
+        ctx.set.status = 201;
         return result;
       }
 
-      const isAuthFailure =
-        result.message === "Não autorizado" ||
-        result.message ===
-          "Apenas administradores podem adicionar transações";
+      const statusByErrorCode: Record<string, number> = {
+        UNAUTHORIZED: 401,
+        FORBIDDEN: 403,
+        SERVER_ERROR: 500,
+      };
 
-      set.status = isAuthFailure ? 401 : 500;
+      ctx.set.status = statusByErrorCode[
+        (result.errorCode ?? "SERVER_ERROR") as string
+      ];
       return result;
     },
     {
@@ -86,4 +95,3 @@ export const app = new Elysia({ prefix: "/api" })
 export const GET = app.fetch;
 export const POST = app.fetch;
 export const DELETE = app.fetch;
-
