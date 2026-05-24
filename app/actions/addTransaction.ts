@@ -1,5 +1,5 @@
 "use server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Database } from "@/app/db";
 import { OIDCClient } from "@/app/service/oidc";
 import { UserGroup } from "@/app/service/oidc/types";
@@ -32,7 +32,10 @@ export async function addTransactionAction(
 ): Promise<AddTransactionResponse> {
   try {
     const cookiesStore = await cookies();
-    const accessToken = cookiesStore.get("access_token")?.value;
+    const headersStore = await headers();
+    const accessToken =
+      cookiesStore.get("access_token")?.value ||
+      headersStore.get("authorization")?.replace("Bearer ", "");
 
     if (!accessToken) {
       return {

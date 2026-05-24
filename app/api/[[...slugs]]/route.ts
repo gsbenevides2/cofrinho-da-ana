@@ -15,7 +15,6 @@ const addTransactionBodySchema = t.Object({
     // compatível com NUMERIC(10,2)
     minimum: -100000000,
     maximum: 100000000,
-    multipleOf: 0.01,
     example: 120.5,
   }),
 });
@@ -51,6 +50,16 @@ const elysiaValidationBodyErrorResponseSchema = t.Object({
   message: t.Optional(t.String()),
 });
 
+const addTransactionHeadersSchema = t.Object({
+  authorization: t.Optional(
+    t.String({
+      description:
+        "Token de acesso no formato 'Bearer <token>'. Alternativamente, o token pode ser fornecido via cookie 'access_token'.",
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    }),
+  ),
+});
+
 export const app = new Elysia({ prefix: "/api" })
   .use(
     openapi({
@@ -59,6 +68,17 @@ export const app = new Elysia({ prefix: "/api" })
           title: "Cofrinho da Ana API",
           version: "1.0.0",
           description: "API de integração externa para gerenciar transações",
+        },
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+              description:
+                "Autenticação via token JWT. O token pode ser fornecido no header 'Authorization' ou no cookie 'access_token'. O token será validado usando OIDCClient.getUserInfo() e deve corresponder a um usuário com grupo 'admin'.",
+            },
+          },
         },
       },
     }),
@@ -92,8 +112,14 @@ export const app = new Elysia({ prefix: "/api" })
         422: elysiaValidationBodyErrorResponseSchema,
         500: addTransactionErrorResponseSchema,
       },
+      //headers: addTransactionHeadersSchema,
       detail: {
         summary: "Adicionar transação",
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
         description:
           "Cria uma nova transação no banco de dados. Autenticação feita via cookie `access_token` (não Bearer) usando OIDCClient.getUserInfo() e verificação de grupo admin.",
       },
