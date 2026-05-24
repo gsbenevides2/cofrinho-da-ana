@@ -42,6 +42,15 @@ const addTransactionErrorResponseSchema = t.Object({
   ]),
 });
 
+// Elysia default body validation error payload (HTTP 422)
+// Observação: campos extras podem existir dependendo do modo/config do app.
+const elysiaValidationBodyErrorResponseSchema = t.Object({
+  type: t.Literal("validation", { description: "Erro de validação" }),
+  on: t.Literal("body", { description: "Objeto validado: body" }),
+  found: t.Optional(t.Any()),
+  message: t.Optional(t.String()),
+});
+
 export const app = new Elysia({ prefix: "/api" })
   .use(
     openapi({
@@ -80,7 +89,7 @@ export const app = new Elysia({ prefix: "/api" })
         201: addTransactionSuccessResponseSchema,
         401: addTransactionErrorResponseSchema,
         403: addTransactionErrorResponseSchema,
-        422: addTransactionErrorResponseSchema,
+        422: elysiaValidationBodyErrorResponseSchema,
         500: addTransactionErrorResponseSchema,
       },
       detail: {
