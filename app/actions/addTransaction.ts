@@ -33,9 +33,11 @@ export async function addTransactionAction(
   try {
     const cookiesStore = await cookies();
     const headersStore = await headers();
-    const accessToken =
-      cookiesStore.get("access_token")?.value ||
-      headersStore.get("authorization")?.replace("Bearer ", "");
+    const rawAuthorization = headersStore.get("authorization");
+    const bearerToken = rawAuthorization
+      ?.match(/^Bearer\s+(.+)$/i)?.[1]
+      ?.trim();
+    const accessToken = cookiesStore.get("access_token")?.value ?? bearerToken;
 
     if (!accessToken) {
       return {

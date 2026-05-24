@@ -50,16 +50,6 @@ const elysiaValidationBodyErrorResponseSchema = t.Object({
   message: t.Optional(t.String()),
 });
 
-const addTransactionHeadersSchema = t.Object({
-  authorization: t.Optional(
-    t.String({
-      description:
-        "Token de acesso no formato 'Bearer <token>'. Alternativamente, o token pode ser fornecido via cookie 'access_token'.",
-      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    }),
-  ),
-});
-
 export const app = new Elysia({ prefix: "/api" })
   .use(
     openapi({
