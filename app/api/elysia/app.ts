@@ -4,6 +4,7 @@ import { addTransactionRoute } from "./routes/addTransaction";
 import { listTransactionsRoute } from "./routes/listTransactions";
 import { deleteTransactionRoute } from "./routes/deleteTransaction";
 import { getBalanceRoute } from "./routes/getBalance";
+import { healthRoute } from "./routes/health";
 
 export const app = new Elysia({ prefix: "/api" })
   .use(
@@ -24,6 +25,10 @@ export const app = new Elysia({ prefix: "/api" })
             name: "Saldo",
             description: "Consulta do saldo agregado",
           },
+          {
+            name: "Health",
+            description: "Endpoints de monitoramento e healthcheck",
+          },
         ],
         components: {
           securitySchemes: {
@@ -39,6 +44,7 @@ export const app = new Elysia({ prefix: "/api" })
       },
     }),
   )
+  .use(healthRoute)
   .use(addTransactionRoute)
   .use(listTransactionsRoute)
   .use(deleteTransactionRoute)
